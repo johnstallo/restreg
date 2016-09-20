@@ -1,0 +1,13 @@
+version: "2"
+services:
+    service-a:
+        build: ./service-a
+        ports:
+            - "8080:80"
+        # links:
+        #     - service-b
+    
+    # service-b:
+    #     build: ./service-b
+    #     expose:
+    #         - 80

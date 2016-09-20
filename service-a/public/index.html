@@ -1,0 +1,79 @@
+<!doctype html>
+<html ng-app="myApp">
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.3/angular-route.js"></script>
+    <script src="app.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="app.css">
+</head>
+
+<body style="background-color:#eee">
+    <div ng-controller="MainController">
+        <nav class="navbar navbar-default" style="bbackground-color:#3097d1;">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Contoso Restaurant</a>
+                </div>
+            </div>
+        </nav>
+        <!--<div class="app-title">Contoso</div>-->
+
+        <div class="row" style="margin-left:5px; margin-right:5px;">
+            <div class="col-xs-6 col-lg-6">
+                <div class="section-body">
+                    <div class="section-heading">Waiting - {{waitinglist.length}}</div>
+                    <div ng-repeat="customer in waitinglist track by $index" ng-click="moveToCalledList($index)">
+                        <span class="customer-summary">{{customer.name}} - {{customer.phone}}</span>
+                    </div>
+                </div>
+
+                <div class="section-body">
+                    <div class="section-heading">Called - {{calledlist.length}}</div>
+                    <div ng-repeat="customer in calledlist track by $index" ng-click="moveToSeatedList($index)">
+                        <span class="customer-summary">{{customer.name}} - {{customer.phone}}</span>
+                    </div>
+                </div>
+
+                <div class="section-body">
+                    <div class="section-heading">Seated - {{seatedlist.length}}</div>
+                    <div ng-repeat="customer in seatedlist track by $index" ng-click="leave($index)">
+                        <span class="customer-summary">{{customer.name}} - {{customer.phone}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-1 col-lg-2"></div>
+            <div class="col-xs-5 col-lg-4">
+                <div class="section-body">
+                    <div class="section-heading">Register on Waiting List</div>
+                    <form>
+                        <div class="form-group">
+                            <input ng-model="formData.name" type="text" class="form-control" id="inputName" placeholder="Name">
+                        </div>
+                        <div class="form-group">
+                            <input ng-model="formData.phoneNumber" type="text" class="form-control" id="inputPhone" placeholder="Phone number">
+                        </div>
+                        <button type="submit" class="btn btn-default" ng-click="addToWaitingList()">Submit</button>
+                        <!--<pre> {{formData | json}} </pre>-->
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!--<div class="row">
+        <div class="col-xs-10">
+            <div ng-repeat="message in messages track by $index">
+                <span class="message" ng-style="getStyle(message)">{{message}}</span>
+            </div>
+        </div>
+        <div class="col-xs-2">
+            <button class="btn btn-md" ng-click="sayHelloToServer()">Say It Again</button>
+            <h4 ng-if="metrics">Count: {{metrics.requestCount | number}}</h4>
+        </div>
+    </div>-->
+    </div>
+</body>
+
+</html>
