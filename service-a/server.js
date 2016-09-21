@@ -1,5 +1,5 @@
 var os = require('os');
-//var request = require('request');
+var request = require('request');
 var express = require('express');
 var morgan = require('morgan');
 var app = express();
@@ -8,21 +8,23 @@ app.use(morgan("dev"));
 
 // api ------------------------------------------------------------
 app.get('/api', function (req, res) {
-
-    // Connect to redis container using environment variables
-    // var redis = require('redis').createClient('redis://myredis');
-    
-    // Increment requestCount each time API is called
-    // redis.incr('requestCount', function (err, reply) {
-    //     var requestCount = reply;
-    // });
-    
-    // Invoke service-b
-    // request('http://service-b', function (error, response, body) {
-    //      res.send('Hello from service-A running on ' + os.hostname() + ' and ' + body);
-    // });
-
     res.send("hello world");
+});
+
+app.get('/api/patrons', function(req, res) {
+    request('http://patrons/patrons', function (error, response, body) {
+        res.send(body);
+    });
+});
+
+app.post('/api/newpatron', function(req, res) {
+    var patron = {
+        phone: req.body.patron,
+        name: req.body.name,
+        partySize: req.body.partySize
+    };
+
+    console.log("API: new patron added: %j", patron);
 });
 
 // app.get('/metrics', function (req, res) {
@@ -32,7 +34,7 @@ app.get('/api', function (req, res) {
 //     });
 // });
 
-// application -------------------------------------------------------------
+// web application -------------------------------------------------------------
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
