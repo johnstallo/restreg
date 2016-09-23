@@ -2,12 +2,14 @@ var os = require('os');
 var request = require('request');
 var express = require('express');
 var morgan = require('morgan');
-
+var amqp = require('amqplib/callback_api');
 var app = express();
 app.use(express.static(__dirname + '/public'));
 app.use(morgan("dev"));
 
+// CONSTANTS
 var RABBITMQ_URL = "amqp://rabbitmq";
+var WORKQUEUE = "workqueue";
 
 // api ------------------------------------------------------------
 app.get('/api', function (req, res) {
@@ -15,19 +17,20 @@ app.get('/api', function (req, res) {
 });
 
 app.get('/api/rabbit', function (req, res) {
-    var amqp = require('amqplib/callback_api');
+    var message = req.query.message || "hello world";
 
     amqp.connect(RABBITMQ_URL, function (err, conn) {
         if (err) {
             console.log("AMQP Error: %s", err.message);
-              res.status(500).send('Error');
+            res.status(500).send('Error');
         }
+
         conn.createChannel(function (err, ch) {
-            var q = "hello";
+            var q = WORKQUEUE;
             ch.assertQueue(q, { durable: false });
-            ch.sendToQueue(q, new Buffer('Hello World'));
-            console.log("Sent 'Hello World");
-            res.send("sent hello world");
+            ch.sendToQueue(q, new Buffer(message));
+            console.log("Sent '%s'", message);
+            res.send(message);
         });
     });
 });
@@ -47,13 +50,6 @@ app.post('/api/newpatron', function (req, res) {
 
     console.log("API: new patron added: %j", patron);
 });
-
-// app.get('/metrics', function (req, res) {
-//     var redis = require('redis').createClient('redis://myredis');
-//     redis.get('requestCount', function (err, reply) {
-//         res.send({ requestCount: reply });
-//     });
-// });
 
 // web application -------------------------------------------------------------
 app.get('/', function (req, res) {
