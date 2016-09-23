@@ -57,26 +57,3 @@ async.retry({
 });
 
 
-
-// setTimeout(function () {
-//     console.log("Attempting to connect to rabbitmq");
-//     var amqp = require('amqplib/callback_api');
-
-//     amqp.connect('amqp://rabbitmq', function (err, conn) {
-//         if (err) {
-//             console.log("[AMQP]", err.message);
-//         }
-
-//         conn.createChannel(function (err, ch) {
-//             var q = 'hello';
-
-//             ch.assertQueue(q, { durable: false });
-//             console.log("Waiting for messages in %s.", q);
-//             ch.consume(q, function (msg) {
-//                 console.log("Received message %s on queue %s", msg.content.toString(), q);
-//             }, { noAck: true });
-//         });
-//     });
-// }, 5000);
-
-
