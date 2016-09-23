@@ -6,8 +6,18 @@ services:
             - "8080:80"
         links:
             - patrons
+            - rabbitmq
     
     patrons:
         build: ./patrons
         expose:
-            - 80
+            - "80"
+        links:
+            - rabbitmq
+
+    rabbitmq:
+        image: rabbitmq
+        ports:
+            - "5672:5672"
+        expose:
+            - "5672"

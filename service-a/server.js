@@ -2,6 +2,9 @@ var os = require('os');
 var request = require('request');
 var express = require('express');
 var morgan = require('morgan');
+
+var amqp = require('amqp');
+
 var app = express();
 app.use(express.static(__dirname + '/public'));
 app.use(morgan("dev"));
@@ -9,6 +12,29 @@ app.use(morgan("dev"));
 // api ------------------------------------------------------------
 app.get('/api', function (req, res) {
     res.send("hello world");
+});
+
+app.get('/api/rabbit', function(req, res) {
+    var connection = amqp.createConnection({host: "rabbitmq"}, {reconnect: false});
+    console.log('Rabbit connection created; waiting for connection... %j', connection);
+
+    connection.on('ready', function() {
+        console.log('Connection ready for use.');
+        connection.queue('hello', {autoDelete: false }, function(q){
+            console.log('Connected to "hello" queue.');
+
+            q.bind('#'); // bind to all messages
+
+            q.on('queueBindOk', function() {
+                var message = 'hello world @ ' + new Date();
+                connection.publish('hello', message);
+
+                console.log('Published message: "' + message + '"');
+                connection.disconnect();
+                res.send("successfully connected to queue");
+            });
+        });
+    });
 });
 
 app.get('/api/patrons', function(req, res) {
