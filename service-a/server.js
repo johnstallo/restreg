@@ -14,6 +14,20 @@ app.get('/api', function (req, res) {
     res.send("hello world");
 });
 
+
+var amqp2 = require('amqplib/callback_api');
+app.get('/api/amqplib', function(req, res) {
+    amqp2.connect('amqp://rabbitmq', function(err, conn) {
+        conn.createChannel(function(err, ch) {
+            var q = "hello";
+            ch.assertQueue(q, {durable: false});
+            ch.sendToQueue(q, new Buffer('Hello World'));
+            console.log("Sent 'Hello World");
+            res.send("sent hello world");
+        });
+    });
+});
+
 app.get('/api/rabbit', function(req, res) {
     var connection = amqp.createConnection({host: "rabbitmq"}, {reconnect: false});
     console.log('Rabbit connection created; waiting for connection... %j', connection);
@@ -38,7 +52,7 @@ app.get('/api/rabbit', function(req, res) {
 });
 
 app.get('/api/patrons', function(req, res) {
-    request('http://patrons/patrons', function (error, response, body) {
+    request('http://patrons/sendrabbit', function (error, response, body) {
         res.send(body);
     });
 });
