@@ -1,6 +1,6 @@
 var os = require('os');
 var express = require('express');
-
+var async = require('async');
 var app = express();
 
 app.get('/patrons', function (req, res) {
@@ -19,9 +19,7 @@ var patrons = [
     { phone: "425 452 2853", name: "Miriam", state: "Waiting", partySize: 2 },
 ];
 
-
-setTimeout(function () {
-    console.log("Attempting to connect to rabbitmq");
+function getRabbitConnection() {
     var amqp = require('amqplib/callback_api');
 
     amqp.connect('amqp://rabbitmq', function (err, conn) {
@@ -29,16 +27,61 @@ setTimeout(function () {
             console.log("[AMQP]", err.message);
         }
 
-        conn.createChannel(function (err, ch) {
-            var q = 'hello';
-
-            ch.assertQueue(q, { durable: false });
-            console.log("Waiting for messages in %s.", q);
-            ch.consume(q, function (msg) {
-                console.log("Received message %s on queue %s", msg.content.toString(), q);
-            }, { noAck: true });
-        });
+        return conn;
     });
-}, 5000);
+}
+
+var amqp = require('amqplib/callback_api');
+
+async.retry({
+    times: 10,
+    interval: function (retryCount) {
+        return 50 * Math.pow(2, retryCount); // exponential backoff
+    }
+}, function (cb, result) {
+    amqp.connect('amqp://rabbitmq', function (err, conn) {
+        if (err) {
+            console.error("*************", err.message);
+            return cb(new Error("could not connect to rabbit"));
+        }
+        // successful connection
+        console.log("Successfully connected");
+        cb(null, conn);
+    });
+}, function (err, connection) {
+    if (err) { return null; } // couldn't connect even after n retries
+
+    connection.createChannel(function (err, ch) {
+        var q = 'hello';
+        ch.assertQueue(q, { durable: false });
+        console.log("Waiting for messages in %s.", q);
+        ch.consume(q, function (msg) {
+            console.log("Received message %s on queue %s", msg.content.toString(), q);
+        }, { noAck: true });
+    });
+});
+
+
+
+// setTimeout(function () {
+//     console.log("Attempting to connect to rabbitmq");
+//     var amqp = require('amqplib/callback_api');
+
+//     amqp.connect('amqp://rabbitmq', function (err, conn) {
+//         if (err) {
+//             console.log("[AMQP]", err.message);
+//         }
+
+//         conn.createChannel(function (err, ch) {
+//             var q = 'hello';
+
+//             ch.assertQueue(q, { durable: false });
+//             console.log("Waiting for messages in %s.", q);
+//             ch.consume(q, function (msg) {
+//                 console.log("Received message %s on queue %s", msg.content.toString(), q);
+//             }, { noAck: true });
+//         });
+//     });
+// }, 5000);
 
 
