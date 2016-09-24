@@ -2,7 +2,7 @@ var os = require('os');
 var request = require('request');
 var express = require('express');
 var morgan = require('morgan');
-var amqp = require('amqplib/callback_api');
+var amqp = require('amqplib');
 var app = express();
 app.use(express.static(__dirname + '/public'));
 app.use(morgan("dev"));
@@ -18,21 +18,33 @@ app.get('/api', function (req, res) {
 
 app.get('/api/rabbit', function (req, res) {
     var message = req.query.message || "hello world";
+    var q = WORKQUEUE;
+    var rabbitmq = require('amqplib').connect(RABBITMQ_URL);
 
-    amqp.connect(RABBITMQ_URL, function (err, conn) {
-        if (err) {
-            console.log("AMQP Error: %s", err.message);
-            res.status(500).send('Error');
-        }
-
-        conn.createChannel(function (err, ch) {
-            var q = WORKQUEUE;
-            ch.assertQueue(q, { durable: false });
-            ch.sendToQueue(q, new Buffer(message));
-            console.log("Sent '%s'", message);
-            res.send(message);
+    rabbitmq.then(function (conn) {
+        conn.createChannel().then(function (ch) {
+            ch.assertQueue(q, { durable: false }).then(function (ok) {
+                ch.sendToQueue(q, new Buffer(message));
+                console.log("Sent message '%s' to queue '%s', %j", message, ok.queue, ok);
+                res.send(message);
+            });
         });
-    });
+    }).catch(console.warn);
+
+    // amqp.connect(RABBITMQ_URL, function (err, conn) {
+    //     if (err) {
+    //         console.log("AMQP Error: %s", err.message);
+    //         res.status(500).send('Error');
+    //     }
+
+    //     conn.createChannel(function (err, ch) {
+    //         var q = WORKQUEUE;
+    //         ch.assertQueue(q, { durable: false });
+    //         ch.sendToQueue(q, new Buffer(message));
+    //         console.log("Sent '%s'", message);
+    //         res.send(message);
+    //     });
+    // });
 });
 
 app.get('/api/patrons', function (req, res) {

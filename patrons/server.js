@@ -35,7 +35,7 @@ async.retry({
 }, function (cb, result) {
     amqp.connect(RABBITMQ_URL, function (err, conn) {
         if (err) {
-            console.error("*************", err.message);
+            console.error("*************", err.message, "*************");
             return cb(new Error("could not connect to rabbit"));
         }
         // successful connection
