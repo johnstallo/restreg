@@ -13,6 +13,14 @@ app.controller('MainController', function ($scope, $http) {
         $scope.formData = {};
     };
 
+
+    $scope.createPatron = function () {
+        var newPatron = { name: $scope.formData.name, phone: $scope.formData.phoneNumber, partySize: 2 };
+        $scope.formData = {};
+        console.log("web: creating new patron: %j", newPatron);
+        return $http.post('/api/patron', newPatron);
+    };
+
     $scope.moveToCalledList = function (i) {
         moveToList($scope.waitinglist, $scope.calledlist, i);
     };
@@ -66,6 +74,40 @@ app.controller('MainController', function ($scope, $http) {
             colorIndex = colorIndex < colors.length - 1 ? colorIndex + 1 : 0;
         }
         return styles[message];
-    }
-
+    };
 });
+
+// app.factory('Patron', ['$http', function($http) {
+
+//     return {
+//         // get: function() {
+//         //     return $http.get('/api/articles');
+//         // },
+//         // getArticle: function(articleID) {
+//         //     return $http.get('/api/articles/' + articleID);
+//         // },
+//         create: function(articleData) {
+//             return $http.post('/api/articles', newPatron);
+//         }
+//         // delete: function(id) {
+//         //     // TODO
+//         // },
+//         // submit: function(newArticle) {
+//         //     console.log("posting new article %j", newArticle);
+//         //     return $http.post('/api/submit', newArticle);
+//         // },
+//         // upvote: function(id) {
+//         //     var articleData = {
+//         //         articleID: id
+//         //     };
+//         //     return $http.post('/api/upvote/', articleData);
+//         // },
+//         // createComment: function(commentData) {
+//         //     return $http.post('/api/comments', commentData);
+//         // },
+//         // getComments: function(articleID) {
+//         //     //console.log("Refreshing comments for article " + articleID);
+//         //     return $http.get('/api/articles/' + articleID + '/comments');
+//         // }
+//     }
+// }]);

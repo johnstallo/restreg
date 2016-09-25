@@ -26,34 +26,60 @@ var patrons = [
     { phone: "425 452 2853", name: "Miriam", state: "Waiting", partySize: 2 },
 ];
 
-// RabbitMQ connection --------------------------------------------
-async.retry({
-    times: 10,
-    interval: function (retryCount) {
-        return 50 * Math.pow(2, retryCount); // exponential backoff
-    }
-}, function (cb, result) {
-    amqp.connect(RABBITMQ_URL, function (err, conn) {
-        if (err) {
-            console.error("*************", err.message, "*************");
-            return cb(new Error("could not connect to rabbit"));
-        }
-        // successful connection
-        console.log("Successfully connected");
-        cb(null, conn);
-    });
-}, function (err, connection) {
-    if (err) { return null; } // couldn't connect even after n retries
+// // RabbitMQ connection --------------------------------------------
+// async.retry({
+//     times: 10,
+//     interval: function (retryCount) {
+//         return 50 * Math.pow(2, retryCount); // exponential backoff
+//     }
+// }, function (cb, result) {
+//     amqp.connect(RABBITMQ_URL, function (err, conn) {
+//         if (err) {
+//             console.error("*************", err.message, "*************");
+//             return cb(new Error("could not connect to rabbit"));
+//         }
+//         // successful connection
+//         console.log("Successfully connected");
+//         cb(null, conn);
+//     });
+// }, function (err, connection) {
+//     if (err) { return null; } // couldn't connect even after n retries
 
-    connection.createChannel(function (err, ch) {
-        var q = WORKQUEUE;
-        ch.assertQueue(q, { durable: false });
-        console.log("Waiting for messages on queue %s.", q);
+//     connection.createChannel(function (err, ch) {
+//         var q = WORKQUEUE;
+//         ch.assertQueue(q, { durable: true });
+//         ch.prefetch(1);
+//         console.log("Waiting for messages on queue %s.", q);
 
-        ch.consume(q, function (msg) {
-            console.log("Received message %s on queue %s", msg.content.toString(), q);
-        }, { noAck: true });
+//         ch.consume(q, function (msg) {
+//             console.log("Received message %s on queue %s", msg.content.toString(), q);
+//             setTimeout(function () {
+//                 ch.ack(msg);
+//             }, 1000);
+//         }, { noAck: false });
+//     });
+// });
+
+// SERVICEBUS ---------------------------------------------------------
+
+setTimeout(function () {
+    var bus = require('servicebus').bus({ url: RABBITMQ_URL });
+    bus.subscribe('my.event', function (event) {
+        console.log("EVENT RECEIVED: %j", event);
     });
-});
+
+    bus.subscribe('patron.requestCreate', function (event) {
+        console.log("EVENT RECEIVED: %j", event);
+        createPatron(event.patron);
+    })
+}, 6000);
+
+function createPatron(patron) {
+    patron.status = "waiting";
+    patrons.push(patron);
+    console.log("patron %j created: %j", patron.phone, patron);
+}
+
+
 
 
