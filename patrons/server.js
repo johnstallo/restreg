@@ -38,6 +38,9 @@ setTimeout(function () {
         console.log("EVENT RECEIVED: %j", event);
         createPatron(event.patron);
     });
+
+    // test
+    // pushNewPatrons();
 }, 6000);
 
 function createPatron(patron) {
@@ -60,5 +63,13 @@ function getServiceBus() {
     }
 }
 
+// function pushNewPatrons() {
+//     var i = patrons.length;
+//     setInterval(function() {
+//         var randomPatron = { name: "Random" + i.toString(), phone: "425-833-912" + i.toString()};
+//         createPatron(randomPatron);
+//         i++;
+//     }, 5000);
+// }
 
 
