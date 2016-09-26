@@ -1,0 +1,41 @@
+.message {
+    font-family: Courier New, Courier, monospace;
+    font-weight: bold;
+}
+
+.section-heading {
+    font-size: 14px;
+    /*font-weight: bold;*/
+    margin-bottom:10px;
+    text-transform: uppercase;
+    color:#777;
+}
+
+.section-body {
+    background-color:white;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom:30px;
+}
+
+.navbar-default .navbar-brand {
+    color:white;
+}
+
+.navbar {
+    border: 0px solid transparent;
+    border-radius: 0px;
+    background-color:#3097d1;
+}
+
+.customer-summary {
+    cursor: pointer;
+}
+
+.customer-summary:hover {
+    color: #3097d1;
+}
