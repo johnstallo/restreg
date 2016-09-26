@@ -15,7 +15,7 @@ app.controller('MainController', function ($scope, $http) {
 
 
     $scope.createPatron = function () {
-        var newPatron = { name: $scope.formData.name, phone: $scope.formData.phoneNumber, partySize: 2 };
+        var newPatron = { name: $scope.formData.name, phone: $scope.formData.phoneNumber, partySize: $scope.formData.partySize };
         $scope.formData = {};
         console.log("web: creating new patron: %j", newPatron);
         return $http.post('/api/patron', newPatron);

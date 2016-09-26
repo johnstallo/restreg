@@ -32,6 +32,9 @@
                         <div class="form-group">
                             <input ng-model="formData.phoneNumber" type="text" class="form-control" id="inputPhone" placeholder="Phone number">
                         </div>
+                        <div class="form-group">
+                            <input ng-model="formData.partySize" type="number" class="form-control" id="inputPartySize" placeholder="Party size">
+                        </div>
                         <button type="submit" class="btn btn-default" ng-click="createPatron()">Submit</button>
                         <!--<pre> {{formData | json}} </pre>-->
                     </form>
@@ -60,21 +63,7 @@
                     </div>
                 </div>
             </div>
-            <!--<div class="col-sm-1 col-lg-2"></div>-->
-            
         </div>
-
-        <!--<div class="row">
-        <div class="col-xs-10">
-            <div ng-repeat="message in messages track by $index">
-                <span class="message" ng-style="getStyle(message)">{{message}}</span>
-            </div>
-        </div>
-        <div class="col-xs-2">
-            <button class="btn btn-md" ng-click="sayHelloToServer()">Say It Again</button>
-            <h4 ng-if="metrics">Count: {{metrics.requestCount | number}}</h4>
-        </div>
-    </div>-->
     </div>
 </body>
 
