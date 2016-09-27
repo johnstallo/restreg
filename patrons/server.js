@@ -30,15 +30,21 @@ var patrons = [
 var bus;
 setTimeout(function () {
     bus = require('servicebus').bus({ url: RABBITMQ_URL });
-    bus.subscribe('my.event', function (event) {
-        console.log("EVENT RECEIVED: %j", event);
-    });
 
     bus.subscribe('patron.requestCreate', function (event) {
-        console.log("EVENT RECEIVED: %j", event);
+        console.log("EVENT RECEIVED: patron.requestCreate - %j", event);
         createPatron(event.patron);
     });
 
+    bus.subscribe('patron.update', function (event) {
+        console.log("EVENT RECEIVED: patron.update - %j", event);
+        updatePatron(event.patron);
+    });
+
+    bus.subscribe('patron.delete', function (event) {
+        console.log("EVENT RECEIVED: patron.delete - %j", event);
+        deletePatron(event.patronID);
+    });
     // test
     // pushNewPatrons();
 }, 6000);
@@ -52,6 +58,31 @@ function createPatron(patron) {
     // publish message: patron.created
     var bus = getServiceBus();
     bus.publish('patron.created', { patron });
+}
+
+function updatePatron(patron) {
+    // find patron to update
+    for (i = 0; i < patrons.length; i++) {
+        if (patrons[i].phone == patron.phone) {
+            patrons[i] = patron;
+            // publish message: patron.created
+            var bus = getServiceBus();
+            bus.publish('patron.updated', { patron });
+            break;
+        }
+    }
+}
+
+function deletePatron(patronID) {
+    for (i = 0; i < patrons.length; i++) {
+        if (patrons[i].phone == patronID) {
+            console.log("Deleting patron %s...", patronID);
+            patrons.splice(i, 1);
+
+            getServiceBus().publish('patron.deleted', { patronID });
+            break;
+        }
+    }
 }
 
 function getServiceBus() {

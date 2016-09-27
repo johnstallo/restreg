@@ -24,14 +24,17 @@ app.controller('MainController', function ($scope, $http) {
     };
 
     var allPatrons = [];
-    $scope.getPatrons = function() {
-        $http.get('/api/patrons').then(function(data) {
+    $scope.getPatrons = function () {
+        // hack!
+        // setTimeout(function () {
+        $http.get('/api/patrons').then(function (data) {
             allPatrons = data.data;
 
             $scope.waitinglist = [];
             $scope.calledlist = [];
+            $scope.seatedlist = [];
 
-            for (i=0; i < allPatrons.length; i++) {
+            for (i = 0; i < allPatrons.length; i++) {
                 var p = allPatrons[i];
                 switch (p.state) {
                     case "waiting":
@@ -40,31 +43,48 @@ app.controller('MainController', function ($scope, $http) {
                     case "called":
                         $scope.calledlist.push(p);
                         break;
+                    case "seated":
+                        $scope.seatedlist.push(p);
+                        break;
                     default:
                         break;
                 }
             }
-
-            //$scope.waitinglist = data.data;
         });
+        // }, 1000);
     };
 
+    updatePatron = function (patronToUpdate) {
+        $http.post('/api/updatepatron/', patronToUpdate).then(function (data) {
+            $scope.getPatrons();
+        });
+    }
+
     // simple polling
-    setInterval(function() {
-        $scope.getPatrons();
-    }, 5000);
+    // setInterval(function() {
+    //     $scope.getPatrons();
+    // }, 5000);
 
-    // $scope.moveToCalledList = function (i) {
-    //     moveToList($scope.waitinglist, $scope.calledlist, i);
-    // };
+    $scope.moveToCalledList = function (patron) {
+        //moveToList($scope.waitinglist, $scope.calledlist, i);
+        console.log("move to called list");
+        patron.state = "called";
+        updatePatron(patron);
+    };
 
-    // $scope.moveToSeatedList = function(i) {
-    //     moveToList($scope.calledlist, $scope.seatedlist, i);
-    // }
+    $scope.moveToSeatedList = function (patron) {
+        // moveToList($scope.calledlist, $scope.seatedlist, i);
+        console.log("move to seated list");
+        patron.state = "seated";
+        updatePatron(patron);
+    }
 
-    // $scope.leave = function(i) {
-    //     $scope.seatedlist.splice(i, 1);
-    // }
+    $scope.leave = function (patron) {
+        //$scope.seatedlist.splice(i, 1);
+        $http.post('/api/deletepatron', { patronID: patron.phone }).then(function (data) {
+            $scope.getPatrons();
+        });
+    }
 
     // function moveToList(fromList, toList, i) {
     //     toList.push(fromList[i]);
