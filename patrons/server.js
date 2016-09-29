@@ -12,7 +12,7 @@ var CLOSED_PATRON = "closed";
 
 // api ------------------------------------------------------------
 app.get('/patrons', function (req, res) {
-    var activePatrons = _.filter(patrons, function(p) {
+    var activePatrons = _.filter(patrons, function (p) {
         return p.state != CLOSED_PATRON;
     });
 
@@ -58,12 +58,18 @@ setTimeout(function () {
         console.log("EVENT RECEIVED: table.assigned - %j", event);
         assignPatronToTable(event.tableID, event.patronID);
     });
-    // test
-    // pushNewPatrons();
+
+    setInterval(function () {
+        _.each(patrons, function (p) {
+            if (p.state == "waiting") {
+                publishEvent("patron.waiting", p);
+            }
+        });
+    }, 5000);
 }, 6000);
 
 function assignPatronToTable(tableID, patronID) {
-    var patron = _.findWhere(patrons, {phone: patronID});
+    var patron = _.findWhere(patrons, { phone: patronID });
     if (patron) {
         patron.tableID = tableID;
         patron.state = "called";
