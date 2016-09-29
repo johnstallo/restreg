@@ -27,9 +27,9 @@ app.listen(port, function () {
 
 // data ------------------------------------------------------------
 var patrons = [
-    { phone: "425 123 9922", name: "Dave", state: "waiting", partySize: 4 },
-    { phone: "425 452 2853", name: "Audrey", state: "waiting", partySize: 2 },
-    { phone: "260 123 1234", name: "Simon", state: "called", partySize: 3 },
+    // { phone: "425 123 9922", name: "Dave", state: "waiting", partySize: 4 },
+    // { phone: "425 452 2853", name: "Audrey", state: "waiting", partySize: 2 },
+    // { phone: "260 123 1234", name: "Simon", state: "called", partySize: 3 },
     { phone: "444 444 4444", name: "Peter", state: CLOSED_PATRON, partySize: 11 },
     { phone: "425 333 2833", name: "Mary", state: "seated", partySize: 2 },
 ];
@@ -53,9 +53,23 @@ setTimeout(function () {
         console.log("EVENT RECEIVED: patron.leave - %j", event);
         leavePatron(event.patronID);
     });
+
+    bus.subscribe('table.assigned', function (event) {
+        console.log("EVENT RECEIVED: table.assigned - %j", event);
+        assignPatronToTable(event.tableID, event.patronID);
+    });
     // test
     // pushNewPatrons();
 }, 6000);
+
+function assignPatronToTable(tableID, patronID) {
+    var patron = _.findWhere(patrons, {phone: patronID});
+    if (patron) {
+        patron.tableID = tableID;
+        patron.state = "called";
+        updatePatron(patron);
+    }
+}
 
 function createPatron(patron) {
     patron.state = "waiting";

@@ -19,6 +19,12 @@ app.get('/api/patrons', function (req, res) {
     });
 });
 
+app.get('/api/tables', function (req, res) {
+    request('http://table-manager/tables', function (error, response, body) {
+        res.send(body);
+    });
+});
+
 app.post('/api/updatepatron', function (req, res) {
     var patron = req.body;
     publishEvent('patron.update', { patron });
