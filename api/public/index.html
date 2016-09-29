@@ -44,7 +44,7 @@
             <div class="col-xs-12 col-sm-6 col-sm-pull-6 col-md-8 col-md-pull-4">
                 <div class="section-body">
                     <div class="section-heading">Waiting - {{waitinglist.length}}</div>
-                    <div ng-repeat="customer in waitinglist track by $index" ng-click="moveToCalledList(customer)">
+                    <div ng-repeat="customer in waitinglist track by $index">
                         <span class="customer-summary">{{customer.name}} - {{customer.phone}}</span>
                     </div>
                 </div>

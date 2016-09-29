@@ -25,8 +25,6 @@ app.controller('MainController', function ($scope, $http) {
 
     var allPatrons = [];
     $scope.getPatrons = function () {
-        // hack!
-        // setTimeout(function () {
         $http.get('/api/patrons').then(function (data) {
             allPatrons = data.data;
 
@@ -51,7 +49,6 @@ app.controller('MainController', function ($scope, $http) {
                 }
             }
         });
-        // }, 1000);
     };
 
     updatePatron = function (patronToUpdate) {
@@ -61,16 +58,9 @@ app.controller('MainController', function ($scope, $http) {
     }
 
     // simple polling
-    // setInterval(function() {
-    //     $scope.getPatrons();
-    // }, 5000);
-
-    $scope.moveToCalledList = function (patron) {
-        //moveToList($scope.waitinglist, $scope.calledlist, i);
-        console.log("move to called list");
-        patron.state = "called";
-        updatePatron(patron);
-    };
+    setInterval(function() {
+        $scope.getPatrons();
+    }, 3000);
 
     $scope.moveToSeatedList = function (patron) {
         // moveToList($scope.calledlist, $scope.seatedlist, i);
