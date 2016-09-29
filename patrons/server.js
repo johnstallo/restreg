@@ -2,15 +2,21 @@ var os = require('os');
 var express = require('express');
 var async = require('async');
 var amqp = require('amqplib/callback_api');
+var _ = require('underscore');
 var app = express();
 
 // CONSTANTS
 var RABBITMQ_URL = "amqp://rabbitmq";
 var WORKQUEUE = "workqueue";
+var CLOSED_PATRON = "closed";
 
 // api ------------------------------------------------------------
 app.get('/patrons', function (req, res) {
-    res.send(patrons);
+    var activePatrons = _.filter(patrons, function(p) {
+        return p.state != CLOSED_PATRON;
+    });
+
+    res.send(activePatrons);
 });
 
 // app ------------------------------------------------------------
@@ -21,9 +27,10 @@ app.listen(port, function () {
 
 // data ------------------------------------------------------------
 var patrons = [
-    { phone: "425 123 9922", name: "John", state: "waiting", partySize: 4 },
-    { phone: "425 452 2853", name: "Miriam", state: "waiting", partySize: 2 },
+    { phone: "425 123 9922", name: "Dave", state: "waiting", partySize: 4 },
+    { phone: "425 452 2853", name: "Audrey", state: "waiting", partySize: 2 },
     { phone: "260 123 1234", name: "Simon", state: "called", partySize: 3 },
+    { phone: "444 444 4444", name: "Peter", state: CLOSED_PATRON, partySize: 11 }
 ];
 
 // SERVICEBUS ---------------------------------------------------------
@@ -77,7 +84,8 @@ function deletePatron(patronID) {
     for (i = 0; i < patrons.length; i++) {
         if (patrons[i].phone == patronID) {
             console.log("Deleting patron %s...", patronID);
-            patrons.splice(i, 1);
+            //patrons.splice(i, 1);
+            patrons[i].state = CLOSED_PATRON;
 
             getServiceBus().publish('patron.deleted', { patronID });
             break;
