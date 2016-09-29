@@ -20,25 +20,17 @@ app.get('/api/patrons', function (req, res) {
 });
 
 app.post('/api/updatepatron', function (req, res) {
-    console.log("Received update patron request: %j", req.body);
     var patron = req.body;
-    var bus = getServiceBus();
-    bus.publish('patron.update', { patron });
-
+    publishEvent('patron.update', { patron });
     res.send({ status: "ok" });
 });
 
 app.post('/api/patronleave', function(req, res){
-    console.log('received leave patron request: %j', req.body);
-    
-    getServiceBus().publish('patron.leave', { patronID: req.body.patronID });
-
+    publishEvent('patron.leave', { patronID: req.body.patronID });
     res.send({ status: "ok" });
 });
 
 app.post('/api/patron', function (req, res) {
-    console.log('received new patron request: %j', req.body);
-
     var patron = {
         phone: req.body.phone,
         name: req.body.name,
@@ -46,8 +38,7 @@ app.post('/api/patron', function (req, res) {
     };
 
     // publish message: patron.requestCreate 
-    var bus = getServiceBus();
-    bus.publish('patron.requestCreate', { patron });
+    publishEvent('patron.requestCreate', { patron });
 
     res.send({ status: "ok" });
 });
@@ -59,6 +50,11 @@ function getServiceBus() {
     else {
         return require('servicebus').bus({ url: RABBITMQ_URL });
     }
+}
+
+function publishEvent(eventName, eventData) {
+    getServiceBus().publish(eventName, eventData);
+    console.log("EVENT PUBLISHED: %s %j", eventName, eventData);
 }
 
 // web api -------------------------------------------------------------
@@ -78,7 +74,7 @@ setTimeout(function () {
     console.log("service bus connected %j", bus);
 
     bus.subscribe('patron.created', function (event) {
-        console.log("EVENT RECEIVED: %j", event);
+        console.log("EVENT RECEIVED: %s - %j", "patron.created", event);
     });
 
 }, 5000);

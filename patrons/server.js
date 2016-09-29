@@ -60,11 +60,7 @@ function createPatron(patron) {
     patron.state = "waiting";
     patrons.push(patron);
 
-    console.log("patron %j created: %j", patron.phone, patron);
-
-    // publish message: patron.created
-    var bus = getServiceBus();
-    bus.publish('patron.created', { patron });
+    publishEvent('patron.created', { patron });
 }
 
 function updatePatron(patron) {
@@ -72,9 +68,8 @@ function updatePatron(patron) {
     for (i = 0; i < patrons.length; i++) {
         if (patrons[i].phone == patron.phone) {
             patrons[i] = patron;
-            // publish message: patron.created
-            var bus = getServiceBus();
-            bus.publish('patron.updated', { patron });
+
+            publishEvent('patron.updated', { patron });
             break;
         }
     }
@@ -83,14 +78,17 @@ function updatePatron(patron) {
 function leavePatron(patronID) {
     for (i = 0; i < patrons.length; i++) {
         if (patrons[i].phone == patronID) {
-            console.log("Patron is leaving %s...", patronID);
-            //patrons.splice(i, 1);
             patrons[i].state = CLOSED_PATRON;
 
-            getServiceBus().publish('patron.left', { patronID });
+            publishEvent('patron.left', { patronID });
             break;
         }
     }
+}
+
+function publishEvent(eventName, eventData) {
+    getServiceBus().publish(eventName, eventData);
+    console.log("EVENT PUBLISHED: %s %j", eventName, eventData);
 }
 
 function getServiceBus() {
