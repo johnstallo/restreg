@@ -51,6 +51,10 @@ app.controller('MainController', function ($scope, $http) {
         });
     };
 
+    $scope.updateData = function() {
+        $scope.getPatrons();
+    };
+
     updatePatron = function (patronToUpdate) {
         $http.post('/api/updatepatron/', patronToUpdate).then(function (data) {
             $scope.getPatrons();
@@ -59,7 +63,7 @@ app.controller('MainController', function ($scope, $http) {
 
     // simple polling
     setInterval(function() {
-        $scope.getPatrons();
+        $scope.updateData();
     }, 3000);
 
     $scope.moveToSeatedList = function (patron) {
