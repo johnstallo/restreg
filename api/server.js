@@ -28,20 +28,10 @@ app.post('/api/updatepatron', function (req, res) {
     res.send({ status: "ok" });
 });
 
-app.post('/api/deletepatron', function(req, res){
-    console.log('received delete patron request: %j', req.body);
+app.post('/api/patronleave', function(req, res){
+    console.log('received leave patron request: %j', req.body);
     
-    getServiceBus().publish('patron.delete', { patronID: req.body.patronID });
-
-    res.send({ status: "ok" });
-});
-
-app.delete('/api/patron', function (req, res) {
-    console.log('received delete patron request: %j', req.body);
-    console.log('params: %j', req.params);
-    
-
-    getServiceBus().publish('patron.delete', { patronID: req.body.phone });
+    getServiceBus().publish('patron.leave', { patronID: req.body.patronID });
 
     res.send({ status: "ok" });
 });

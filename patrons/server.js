@@ -48,9 +48,9 @@ setTimeout(function () {
         updatePatron(event.patron);
     });
 
-    bus.subscribe('patron.delete', function (event) {
-        console.log("EVENT RECEIVED: patron.delete - %j", event);
-        deletePatron(event.patronID);
+    bus.subscribe('patron.leave', function (event) {
+        console.log("EVENT RECEIVED: patron.leave - %j", event);
+        leavePatron(event.patronID);
     });
     // test
     // pushNewPatrons();
@@ -80,14 +80,14 @@ function updatePatron(patron) {
     }
 }
 
-function deletePatron(patronID) {
+function leavePatron(patronID) {
     for (i = 0; i < patrons.length; i++) {
         if (patrons[i].phone == patronID) {
-            console.log("Deleting patron %s...", patronID);
+            console.log("Patron is leaving %s...", patronID);
             //patrons.splice(i, 1);
             patrons[i].state = CLOSED_PATRON;
 
-            getServiceBus().publish('patron.deleted', { patronID });
+            getServiceBus().publish('patron.left', { patronID });
             break;
         }
     }

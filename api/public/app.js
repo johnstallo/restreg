@@ -81,7 +81,7 @@ app.controller('MainController', function ($scope, $http) {
 
     $scope.leave = function (patron) {
         //$scope.seatedlist.splice(i, 1);
-        $http.post('/api/deletepatron', { patronID: patron.phone }).then(function (data) {
+        $http.post('/api/patronleave', { patronID: patron.phone }).then(function (data) {
             $scope.getPatrons();
         });
     }
