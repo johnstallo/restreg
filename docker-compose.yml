@@ -15,6 +15,14 @@ services:
         links:
             - rabbitmq
 
+    table-manager:
+        build: ./table-manager
+        expose:
+            - "80"
+        links:
+            - rabbitmq
+            - patrons
+
     rabbitmq:
         image: rabbitmq
         ports:
