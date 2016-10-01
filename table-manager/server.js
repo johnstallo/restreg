@@ -15,6 +15,10 @@ app.get('/tables', function (req, res) {
     res.send(tables);
 });
 
+app.get('/availabletables', function(req, res) {
+    res.send(getAvailableTables());
+})
+
 // app ------------------------------------------------------------
 var port = process.env.PORT || 80;
 app.listen(port, function () {
@@ -84,6 +88,11 @@ function findAvailableTable(capacity) {
     return null;
 }
 
+function getAvailableTables() {
+    return _.filter(tables, function(t) {
+        return t.state == "available";
+    });
+}
 
 function publishEvent(eventName, eventData) {
     getServiceBus().publish(eventName, eventData);
