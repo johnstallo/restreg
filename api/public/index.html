@@ -4,6 +4,8 @@
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.3/angular-route.js"></script>
+    <script src="bower_components/moment/min/moment.min.js"></script>
+    <script src="bower_components/angular-moment/angular-moment.min.js"></script>
     <script src="app.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
         crossorigin="anonymous">
@@ -46,7 +48,7 @@
                 <div class="section-body">
                     <div class="section-heading">Waiting - {{waitinglist.length}}</div>
                     <div ng-repeat="customer in waitinglist track by $index">
-                        <span class="customer-summary">{{customer.name}} - {{customer.phone}}</span>
+                        <span class="customer-summary">{{customer.name}} - {{customer.phone}} <span style="color:gray;">(<span am-time-ago="customer.waitStartTime"></span>)</span></span>
                     </div>
                 </div>
 
@@ -60,7 +62,7 @@
                 <div class="section-body">
                     <div class="section-heading">Seated - {{seatedlist.length}}</div>
                     <div ng-repeat="customer in seatedlist track by $index" ng-click="leave(customer)">
-                        <span class="customer-summary">{{customer.name}} - {{customer.phone}}</span>
+                        <span class="customer-summary">{{customer.name}} - {{customer.phone}} (<span am-time-ago="customer.seatStartTime"></span>)</span>
                     </div>
                 </div>
                 <!--<pre> {{allPatronsList | json}}</pre>-->

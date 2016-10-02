@@ -27,12 +27,12 @@ app.listen(port, function () {
 
 // data ------------------------------------------------------------
 var patrons = [
-    { phone: "425 123 9922", name: "Dave", state: "waiting", partySize: 4 },
-    { phone: "425 452 2853", name: "Audrey", state: "waiting", partySize: 2 },
-    { phone: "260 123 1234", name: "Simon", state: "waiting", partySize: 3 },
+    { phone: "425 123 9922", name: "Dave", state: "waiting", partySize: 4, waitStartTime: new Date() },
+    { phone: "425 452 2853", name: "Audrey", state: "waiting", partySize: 2, waitStartTime: new Date()  },
+    { phone: "260 123 1234", name: "Simon", state: "waiting", partySize: 3, waitStartTime: new Date() },
     { phone: "444 444 4444", name: "Peter", state: CLOSED_PATRON, partySize: 11 },
-    { phone: "425 333 2833", name: "Mary", state: "seated", partySize: 2 },
-    { phone: "425 237 9999", name: "Barry", state: "waiting", partySize: 3 },
+    { phone: "425 333 2833", name: "Mary", state: "seated", partySize: 2, waitStartTime: new Date(), seatStartTime: new Date() },
+    { phone: "425 237 9999", name: "Barry", state: "waiting", partySize: 3, waitStartTime: new Date() },
 ];
 
 // SERVICEBUS ---------------------------------------------------------
@@ -89,7 +89,11 @@ function updatePatron(patron) {
     // find patron to update
     for (i = 0; i < patrons.length; i++) {
         if (patrons[i].phone == patron.phone) {
+            var oldState = patrons[i].state; 
             patrons[i] = patron;
+            if (oldState == "called" && patron.state == "seated") {
+                patrons[i].seatStartTime = new Date();
+            }
 
             publishEvent('patron.updated', { patron });
             break;

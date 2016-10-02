@@ -1,4 +1,4 @@
-var app = angular.module('myApp', ['ngRoute']);
+var app = angular.module('myApp', ['ngRoute', 'angularMoment']);
 app.controller('MainController', function ($scope, $http) {
 
     //$scope.waitinglist = [];
