@@ -11,7 +11,7 @@ RUN npm install
 
 # bower install
 RUN echo '{ "allow_root": true, "directory" : "public/bower_components" }' > /root/.bowerrc
-COPY bower.json .bowerrc* .
+COPY bower.json .bowerrc* ./
 RUN bower install
 
 # copy source
