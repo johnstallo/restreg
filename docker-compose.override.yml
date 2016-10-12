@@ -3,4 +3,4 @@ services:
     api:
         volumes:
             - './api:/app/src'
-            - /app/src/public/bower_components
+            - /app/src/public/bower_components  # create data volume so that data from docker image is copied back when volume is mapped
