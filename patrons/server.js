@@ -20,6 +20,10 @@ app.get('/patrons', function (req, res) {
     res.send(activePatrons);
 });
 
+app.get('/', function (req, res) {
+    res.send('hello world from patrons');
+});
+
 // app ------------------------------------------------------------
 var port = process.env.PORT || 80;
 app.listen(port, function () {
