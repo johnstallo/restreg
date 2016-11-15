@@ -16,6 +16,7 @@ app.get('/patrons', function (req, res) {
         return p.state != CLOSED_PATRON;
     });
 
+    console.log("GET PATRONS: %j", activePatrons);
     res.send(activePatrons);
 });
 
