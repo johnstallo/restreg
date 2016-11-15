@@ -75,6 +75,8 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
 
+// !! hard-coding to port 80 since DC/OS sets process.env.PORT to the host port, not the container port.
+// var port = process.env.PORT || 80;
 var port = 80;
 app.listen(port, function () {
     console.log('Listening on port ' + port);

@@ -20,7 +20,9 @@ app.get('/availabletables', function(req, res) {
 })
 
 // app ------------------------------------------------------------
-var port = process.env.PORT || 80;
+// !! hard-coding to port 80 since DC/OS sets process.env.PORT to the host port, not the container port.
+// var port = process.env.PORT || 80;
+var port = 80;
 app.listen(port, function () {
     console.log("Listening on port " + port);
 });
