@@ -15,6 +15,7 @@ var RABBITMQ_URL = "amqp://rabbitmq";
 // api ------------------------------------------------------------
 app.get('/api/patrons', function (req, res) {
     request('http://patrons/patrons', function (error, response, body) {
+        console.log("GET PATRONS -- %j", body);
         res.send(body);
     });
 });
